@@ -24,21 +24,33 @@ class Kele
 
     def get_messages(page_num=nil)
       if page_num == nil
-        response = self.class.get("https://www.bloc.io/api/v1/message_threads"), headers: { "authorization" => @auth_token })
+        response = self.class.get("https://www.bloc.io/api/v1/message_threads", headers: { "authorization" => @auth_token })
       else
-        response = self.class.get(api_url("https://www.bloc.io/api/v1/message_threads?page=#{page_num}"), headers: { "authorization" => @auth_token })
+        response = self.class.get("https://www.bloc.io/api/v1/message_threads?page=#{page_num}", headers: { "authorization" => @auth_token })
       end
       @messages = JSON.parse(response.body)
     end
 
     def create_message(sender, recipient_id, subject, stripped_text)
-      response = self.class.post("https://www.bloc.io/api/v1/messages"), 
+      response = self.class.post("https://www.bloc.io/api/v1/messages", 
         body: {
           "sender": sender,
           "recipient_id": recipient_id,
           "subject": subject,
           "stripped_text": stripped_text
-      },
+        },
+        headers: {"authorization" => @auth_token})
+    end
+
+    def create_submission(enrollment_id, checkpoint_id, assignment_branch, assignment_commit_link, comment)
+      response = self.class.post("https://www.bloc.io/api/v1/checkpoint_submissions", 
+        body: {
+          "enrollment_id": enrollment_id,
+          "checkpoint_id": checkpoint_id,
+          "assignment_branch": assignment_branch,
+          "assignment_commit_link": assignment_commit_link,
+          "comment": comment
+        },
         headers: {"authorization" => @auth_token})
     end
 end
